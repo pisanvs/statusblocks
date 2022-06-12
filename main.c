@@ -32,6 +32,11 @@ bool        	BlockDue[LENGTH(blocks)];
 bool        	updatePending = True;
 long int    	it = 0;
 
+/**
+ * @brief spawn new process `cmd` 
+ * 
+ * @param cmd string to be executed in shell
+ */
 void spawn(const char *cmd) {
 	if (fork() == 0) {
 		if (dpy)
@@ -42,6 +47,13 @@ void spawn(const char *cmd) {
 	}
 }
 
+/**
+ * @brief spawn new process `cmd` and get its output
+ * 
+ * @param cmd string to be executed in shell
+ * @param MAXOUT max output buffer size
+ * @return char* output of cmd
+ */
 char* spawn_out(const char *cmd, size_t MAXOUT) {
 	FILE *fp;
 	char ret[MAXOUT];
@@ -60,6 +72,9 @@ char* spawn_out(const char *cmd, size_t MAXOUT) {
 	return NULL;
 }
 
+/**
+ * @brief Update blocks if due
+ */
 void updateBlocks() {
 	for (int i = 0; i < LENGTH(blocks); i++) {
 		if (it % (int) (blocks[i].interval*4) == 0)
@@ -88,6 +103,11 @@ void updateBlocks() {
 	}
 }
 
+/**
+ * @brief update status message using blocks' text property
+ * 
+ * @param d X11 display to update
+ */
 void updateStatus(Display *d) {
 	char *s = (char *)malloc(sizeof(char) * STATUSLENGTH);
 	memset(s, 0, sizeof(char) * STATUSLENGTH);
@@ -104,15 +124,32 @@ void updateStatus(Display *d) {
 	free(s);
 }
 
+/**
+ * @brief exit gracefully on signal
+ * 
+ * @param sig signal number
+ */
 void term_handler(int sig) {
 	XCloseDisplay(dpy);
 	exit(0);
 }
 
+/**
+ * @brief signal handler that marks block as due
+ * 
+ * @param sig signal number 
+ * @param info signal info
+ */
 void sigupdate(int sig, siginfo_t *info, void *context) {
 	BlockDue[sig - 1] = True;
 }
 
+/**
+ * @brief signal handler that handles dwm status clicks
+ * 
+ * @param sig signal number
+ * @param info signal info
+ */
 void sigclick(int sig, siginfo_t *info, void *context) {
 	sig -= SIGRTMIN;
 	Block *b = &blocks[SIGCHAR - sig];
@@ -123,6 +160,9 @@ void sigclick(int sig, siginfo_t *info, void *context) {
 	free(cmd);
 }
 
+/**
+ * @brief initialize signal handlers
+ */
 void signal_init() {
 	struct sigaction sa;
 
