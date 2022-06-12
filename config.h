@@ -23,11 +23,13 @@ typedef struct block_t {
    realtime signal for clicks sent by dwm, SIGNAL + 44 is the realtime
    signal for block updates */
 
+#define CMDPREFIX "~/.local/bin/"
+// TODO: signals dont work if not consecutive
 Block blocks[] = {
 	/* CMD              INTERVAL    SIGNAL */
-	{ "sb-prices",		120,		1},
-	{ "sb-forecast",    3600,		2},
-	{ "sb-datetime",    0.25,		4},
-	{ "sb-mem",         4,			6},
-	{ "sb-cpu",         4,			7}
+	{ CMDPREFIX"sb-prices",		120,		1},
+	{ CMDPREFIX"sb-forecast",    3600,		2},
+	{ CMDPREFIX"sb-datetime",    0.25,		3},
+	{ CMDPREFIX"sb-mem",         4,			4},
+	{ CMDPREFIX"sb-cpu",         4,			5}
 };
